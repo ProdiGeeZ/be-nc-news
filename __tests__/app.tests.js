@@ -12,13 +12,13 @@ afterAll(() => {
     db.end();
 });
 
-describe('Invalid endpoints', () => {
-    test("404: Responds with an error for endpoints that do not exist", () => {
+describe("GET /api/nonexistentendpoint", () => {
+    test("404: Responds with an error when endpoint path does not exist", () => {
         return request(app)
-            .get("/notavalidendpoint")
-            .expect(404)
-            .then(({ body }) => {
-                expect(body.msg).toBe("Path not found");
-            });
+        .get("/api/nonexistentendpoint")
+        .expect(404)
+        .then(({ body }) => {
+        expect(body.msg).toBe("Path not found");
+        });
     });
 });
