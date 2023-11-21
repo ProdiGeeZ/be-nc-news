@@ -52,8 +52,43 @@ describe('GET /api', () => {
                 const docs = body.endpoints;
                 expect(docs).toBeInstanceOf(Object);
                 expect(docs).toEqual(endpoints)
-                console.log(docs);
             });
     });
-    
+});
+
+describe('GET /api/articles/:article_id', () => {
+    test('200: Should return an article object with the correct keys', () => {
+        return request(app)
+            .get("/api/articles/1")
+            .expect(200)
+            .then((response) => {
+                const { article } = response.body;
+                expect(article).toMatchObject({
+                    author: expect.any(String),
+                    title: expect.any(String),
+                    article_id: expect.any(Number),
+                    body: expect.any(String),
+                    topic: expect.any(String),
+                    created_at: expect.any(String),
+                    votes: expect.any(Number),
+                    article_img_url: expect.any(String),
+                });
+            });
+    });
+    test("404: Should return an error when the requested article_id does not exist", () => {
+        return request(app)
+            .get("/api/articles/9000")
+            .expect(404)
+            .then((response) => {
+                expect(response.body.msg).toBe("Not Found: article_id does not exist.");
+            });
+    });
+    test('400: Should return "Invalid article_id format" for invalid article_id', () => {
+        return request(app)
+            .get("/api/articles/invalid_id")
+            .expect(400)
+            .then((response) => {
+                expect(response.body.msg).toBe("Bad Request: Invalid article_id format");
+            });
+    });
 });
