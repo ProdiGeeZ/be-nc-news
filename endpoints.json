@@ -16,12 +16,33 @@
       "articles": [
         {
           "title": "Seafood substitutions are increasing",
-          "topic": "cooking",
           "author": "weegembump",
-          "body": "Text from the article..",
+          "article_id": "22",
+          "topic": "cooking",
           "created_at": "2018-05-30T15:59:13.341Z",
           "votes": 0,
+          "article_img_url": "http://example.com/image.jpg",
           "comment_count": 6
+        },
+        {
+          "title": "Uncle Ruckus is Officially Out of Jail!",
+          "author": "Stuart_Little",
+          "article_id": "12",
+          "topic": "Controversial News",
+          "created_at": "2015-09-14T15:59:13.341Z",
+          "votes": 1432,
+          "article_img_url": "http://example.com/image.jpg",
+          "comment_count": 156
+        },
+        {
+          "title": "Climate Change Debunked",
+          "author": "Flat_Earther",
+          "article_id": "42",
+          "topic": "Fake News",
+          "created_at": "2023-07-31T15:59:13.341Z",
+          "votes": -1653,
+          "article_img_url": "http://example.com/image.jpg",
+          "comment_count": 256
         }
       ]
     }
