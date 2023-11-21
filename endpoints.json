@@ -25,5 +25,21 @@
         }
       ]
     }
+  },
+  "GET /api/articles/:article_id": {
+    "description": "Get an article by its id",
+    "queries": ["article_id"],
+    "exampleResponse": {
+      "article": {
+        "author": "example_author",
+        "title": "Example Title",
+        "article_id": 1,
+        "body": "Article content...",
+        "topic": "example_topic",
+        "created_at": "2023-01-01T00:00:00.000Z",
+        "votes": 10,
+        "article_img_url": "http://example.com/image.jpg"
+      }
+    }
   }
 }
