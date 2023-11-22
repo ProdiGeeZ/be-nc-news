@@ -126,3 +126,51 @@ describe('GET /api/articles', () => {
             });
     });
 });
+
+describe.only('GET /api/articles/:article_id/comments', () => {
+    test('200: Should return an array of comments associated with the given article_id', () => {
+        return request(app)
+            .get("/api/articles/1/comments")
+            .expect(200)
+            .then((response) => {
+                const comments = response.body.comments;
+                expect(comments).toHaveLength(11);
+                comments.forEach((comment) => {
+                    expect(comment).toMatchObject({
+                        comment_id: expect.any(Number),
+                        votes: expect.any(Number),
+                        created_at: expect.any(String),
+                        author: expect.any(String),
+                        body: expect.any(String),
+                        article_id: 1,
+                    });
+                })
+            });
+    });
+    test('200: Should return comments sorted by created_at key order descending', () => {
+        return request(app)
+        .get("/api/articles/1/comments")
+            .expect(200)
+            .then((response) => {
+                const comments = response.body.comments;
+                expect(comments).toHaveLength(11);
+                expect(comments).toBeSorted('created_at', { descending: true })
+            });
+    });
+    test('404: Should return an error with a message when there is no article_id or no comments associated with that article_id.', () => {
+        return request(app)
+        .get("/api/articles/7/comments")
+            .expect(404)
+            .then((response) => {
+                expect(response.body.msg).toBe("Not Found: article_id does not exist or there are no comments associated with that article_id")
+            });
+    });
+    test('400: Should return an error with a message when the article_id is invalid', () => {
+        return request(app)
+        .get("/api/articles/bad_id/comments")
+            .expect(400)
+            .then((response) => {
+                expect(response.body.msg).toBe("Bad Request: Invalid article_id format")
+            });
+    });
+});
