@@ -92,3 +92,37 @@ describe('GET /api/articles/:article_id', () => {
             });
     });
 });
+
+describe('GET /api/articles', () => {
+    test('200: Should return an array containing all article objects with correct keys', () => {
+        return request(app)
+            .get("/api/articles")
+            .expect(200)
+            .then((response) => {
+                const articles = response.body.articles;
+                expect(articles).toHaveLength(13);
+                articles.forEach(article => {
+                    expect(article).toMatchObject({
+                        author: expect.any(String),
+                        title: expect.any(String),
+                        article_id: expect.any(Number),
+                        topic: expect.any(String),
+                        created_at: expect.any(String),
+                        votes: expect.any(Number),
+                        article_img_url: expect.any(String),
+                        comment_count: expect.any(Number),
+                    });
+                });
+            });
+    });
+    test('200: Should return the array sorted by created_at key descending.', () => {
+        return request(app)
+            .get("/api/articles")
+            .expect(200)
+            .then((response) => {
+                const articles = response.body.articles;
+                expect(articles).toHaveLength(13);
+                expect(articles).toBeSorted('created_at', { descending: true })
+            });
+    });
+});
