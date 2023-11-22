@@ -115,4 +115,14 @@ describe('GET /api/articles', () => {
                 });
             });
     });
+    test('200: Should return the array sorted by created_at key descending.', () => {
+        return request(app)
+            .get("/api/articles")
+            .expect(200)
+            .then((response) => {
+                const articles = response.body.articles;
+                expect(articles).toHaveLength(13);
+                expect(articles).toBeSorted('created_at', { descending: true })
+            });
+    });
 });

@@ -23,7 +23,8 @@ exports.fetchArticles = () => {
         a.votes,
         a.article_img_url,
         (SELECT COUNT(c.comment_id)::int FROM comments c WHERE c.article_id = a.article_id) AS comment_count
-    FROM articles a;`;
+        FROM articles a
+    ORDER BY a.created_at DESC`;
     return db.query(queryString)
     .then((result) => {
         return result.rows;
