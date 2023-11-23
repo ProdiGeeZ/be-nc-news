@@ -126,3 +126,70 @@ describe('GET /api/articles', () => {
             });
     });
 });
+
+describe('GET /api/articles/:article_id/comments', () => {
+    test('200: Should return an array of comments associated with the given article_id', () => {
+        return request(app)
+            .get("/api/articles/1/comments")
+            .expect(200)
+            .then((response) => {
+                const comments = response.body.comments;
+                expect(comments).toHaveLength(11);
+                comments.forEach((comment) => {
+                    expect(comment).toMatchObject({
+                        comment_id: expect.any(Number),
+                        votes: expect.any(Number),
+                        created_at: expect.any(String),
+                        author: expect.any(String),
+                        body: expect.any(String),
+                        article_id: 1,
+                    });
+                })
+            });
+    });
+    test('200: Should return comments sorted by created_at key order descending', () => {
+        return request(app)
+        .get("/api/articles/1/comments")
+            .expect(200)
+            .then((response) => {
+                const comments = response.body.comments;
+                expect(comments).toHaveLength(11);
+                expect(comments).toBeSorted('created_at', { descending: true })
+            });
+    });
+    test('200: Should return a message when there are no articles found for an existing article_id', () => {
+        return request(app)
+        .get("/api/articles/7/comments")
+            .expect(200)
+            .then((response) => {
+                expect(response.body.msg).toBe("No comments found for this article_id")
+            });
+    });
+    test('404: Should return an error with a message when article_id does not exist.', () => {
+        return request(app)
+        .get("/api/articles/9000/comments")
+            .expect(404)
+            .then((response) => {
+                expect(response.body.msg).toBe("Not Found: article_id does not exist.")
+            });
+    });
+    test('400: Should return an error with a message when the article_id is invalid', () => {
+        return request(app)
+        .get("/api/articles/bad_id/comments")
+            .expect(400)
+            .then((response) => {
+                expect(response.body.msg).toBe("Bad Request: Invalid article_id format")
+            });
+    });
+});
+
+describe('POST /api/articles/:article_id/comments', () => {
+    test('201: should post a commentand return it with the correct keys and values', () => {
+        return request(app)
+        .post("/api/articles/1/comments")
+        .expect(201)
+        .then((response) => {
+            expect(response.body.msg).toBe("Bad Request: Invalid article_id format")
+        });
+    });
+});
