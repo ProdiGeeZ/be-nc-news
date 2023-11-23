@@ -10,7 +10,6 @@ app.get("/api", controllers.getDocs);
 app.all("*", controllers.send404);
 
 app.use((err, req, res, next) => {
-    console.log(err);
     const status = err.status || 500;
     const message = err.msg || "Internal Server Error";
     if(err.code === '22P02'){

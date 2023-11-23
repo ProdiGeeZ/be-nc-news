@@ -127,7 +127,7 @@ describe('GET /api/articles', () => {
     });
 });
 
-describe.only('GET /api/articles/:article_id/comments', () => {
+describe('GET /api/articles/:article_id/comments', () => {
     test('200: Should return an array of comments associated with the given article_id', () => {
         return request(app)
             .get("/api/articles/1/comments")
@@ -157,12 +157,20 @@ describe.only('GET /api/articles/:article_id/comments', () => {
                 expect(comments).toBeSorted('created_at', { descending: true })
             });
     });
-    test('404: Should return an error with a message when there is no article_id or no comments associated with that article_id.', () => {
+    test('200: Should return a message when there are no articles found for an existing article_id', () => {
         return request(app)
         .get("/api/articles/7/comments")
+            .expect(200)
+            .then((response) => {
+                expect(response.body.msg).toBe("No comments found for this article_id")
+            });
+    });
+    test('404: Should return an error with a message when article_id does not exist.', () => {
+        return request(app)
+        .get("/api/articles/9000/comments")
             .expect(404)
             .then((response) => {
-                expect(response.body.msg).toBe("Not Found: article_id does not exist or there are no comments associated with that article_id")
+                expect(response.body.msg).toBe("Not Found: article_id does not exist.")
             });
     });
     test('400: Should return an error with a message when the article_id is invalid', () => {
