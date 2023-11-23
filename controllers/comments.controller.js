@@ -8,3 +8,7 @@ exports.getArticleComments = (req, res, next) => {
         })
         .catch(next);
 };
+
+exports.postComment = (req, res, next) => {
+    
+}

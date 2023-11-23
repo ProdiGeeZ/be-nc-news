@@ -6,6 +6,7 @@ app.get("/api/topics", controllers.getTopics);
 app.get("/api/articles", controllers.getAllArticles);
 app.get("/api/articles/:article_id", controllers.getArticleById);
 app.get('/api/articles/:article_id/comments', controllers.getArticleComments);
+app.post('/api/articles/:article_id/comments', controllers.postComment);
 app.get("/api", controllers.getDocs);
 app.all("*", controllers.send404);
 
