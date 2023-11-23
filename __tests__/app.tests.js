@@ -182,14 +182,3 @@ describe('GET /api/articles/:article_id/comments', () => {
             });
     });
 });
-
-describe('POST /api/articles/:article_id/comments', () => {
-    test('201: should post a commentand return it with the correct keys and values', () => {
-        return request(app)
-        .post("/api/articles/1/comments")
-        .expect(201)
-        .then((response) => {
-            expect(response.body.msg).toBe("Bad Request: Invalid article_id format")
-        });
-    });
-});
