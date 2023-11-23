@@ -1,4 +1,5 @@
 const db = require("../db/connection.js");
+const format = require('pg-format');
 
 exports.fetchArticleComments = (article_id) => {
     return db.query('SELECT * FROM articles WHERE article_id = $1', [article_id])
@@ -28,5 +29,30 @@ exports.fetchArticleComments = (article_id) => {
         });
 };
 
+exports.addComment = (article_id, commentData) => {
+    const queryString = format(
+        'INSERT INTO comments (body, article_id, author, votes, created_at) VALUES (%L, %L, %L, %L, %L) RETURNING *;',
+        commentData.body,
+        article_id,
+        commentData.username,
+        0,
+        new Date(),
+    );
+    return db.query(queryString)
+        .then((result) => {
+            if (result.rows.length === 0) {
+                console.log('Hey buddy.. you fkd up');
+            }
+            return result.rows[0];
+        });
+};
 
-
+exports.articleCheck = (article_id) => {
+    return db.query('SELECT * FROM articles WHERE article_id = $1', [article_id])
+    .then((result) => {
+        if (!result.rows[0]) {
+            return Promise.reject({ status: 404, msg: "Not Found: article_id does not exist." });
+        }
+        return article_id;
+    })    
+}
