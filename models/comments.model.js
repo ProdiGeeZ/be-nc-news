@@ -40,9 +40,6 @@ exports.addComment = (article_id, commentData) => {
     );
     return db.query(queryString)
         .then((result) => {
-            if (result.rows.length === 0) {
-                console.log('Hey buddy.. you fkd up');
-            }
             return result.rows[0];
         });
 };
@@ -51,7 +48,7 @@ exports.articleCheck = (article_id) => {
     return db.query('SELECT * FROM articles WHERE article_id = $1', [article_id])
     .then((result) => {
         if (!result.rows[0]) {
-            return Promise.reject({ status: 404, msg: "Not Found: article_id does not exist." });
+            return Promise.reject({ status: 404, msg: `Not Found: article_id does not exist.` });
         }
         return article_id;
     })    
