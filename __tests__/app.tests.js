@@ -88,7 +88,7 @@ describe('GET /api/articles/:article_id', () => {
             .get("/api/articles/invalid_id")
             .expect(400)
             .then((response) => {
-                expect(response.body.msg).toBe("Bad Request: Invalid article_id format");
+                expect(response.body.msg).toBe("Bad Request: Invalid article_id format.");
             });
     });
 });
@@ -149,7 +149,7 @@ describe('GET /api/articles/:article_id/comments', () => {
     });
     test('200: Should return comments sorted by created_at key order descending', () => {
         return request(app)
-        .get("/api/articles/1/comments")
+            .get("/api/articles/1/comments")
             .expect(200)
             .then((response) => {
                 const comments = response.body.comments;
@@ -159,7 +159,7 @@ describe('GET /api/articles/:article_id/comments', () => {
     });
     test('200: Should return a message when there are no articles found for an existing article_id', () => {
         return request(app)
-        .get("/api/articles/7/comments")
+            .get("/api/articles/7/comments")
             .expect(200)
             .then((response) => {
                 expect(response.body.msg).toBe("No comments found for this article_id")
@@ -167,7 +167,7 @@ describe('GET /api/articles/:article_id/comments', () => {
     });
     test('404: Should return an error with a message when article_id does not exist.', () => {
         return request(app)
-        .get("/api/articles/9000/comments")
+            .get("/api/articles/9000/comments")
             .expect(404)
             .then((response) => {
                 expect(response.body.msg).toBe("Not Found: article_id does not exist.")
@@ -175,10 +175,215 @@ describe('GET /api/articles/:article_id/comments', () => {
     });
     test('400: Should return an error with a message when the article_id is invalid', () => {
         return request(app)
-        .get("/api/articles/bad_id/comments")
+            .get("/api/articles/bad_id/comments")
             .expect(400)
             .then((response) => {
-                expect(response.body.msg).toBe("Bad Request: Invalid article_id format")
+                expect(response.body.msg).toBe("Bad Request: Invalid article_id format.")
             });
     });
 });
+
+describe('POST /api/articles/:article_id/comments', () => {
+    test('201: Should create and post a comment with 2 keys from the request body being username and body, including the other 3 keys', () => {
+        const commentData = { username: "butter_bridge", body: "first comment lol." };
+        return request(app)
+            .post("/api/articles/7/comments")
+            .send(commentData)
+            .expect(201)
+            .then((response) => {
+                const comment = response.body.comment
+                expect(Object.keys(comment)).toHaveLength(6);
+                expect(response.body.comment).toBeDefined();
+                expect(response.body.comment.author).toBe(commentData.username);
+                expect(response.body.comment.body).toBe(commentData.body);
+                expect(comment).toMatchObject({
+                    comment_id: 19,
+                    body: 'first comment lol.',
+                    article_id: 7,
+                    author: 'butter_bridge',
+                    votes: 0,
+                    created_at: expect.any(String),
+                })
+            })
+    });
+    test('201: Should create and post a comment even when JSON body has additional keys so long as username and body are included', () => {
+        const commentData = { username: "butter_bridge", body: "first comment lol." };
+        return request(app)
+            .post("/api/articles/7/comments")
+            .send(commentData)
+            .expect(201)
+            .then((response) => {
+                const comment = response.body.comment
+                expect(Object.keys(comment)).toHaveLength(6);
+                expect(response.body.comment).toBeDefined();
+                expect(response.body.comment.author).toBe(commentData.username);
+                expect(response.body.comment.body).toBe(commentData.body);
+                expect(comment).toMatchObject({
+                    comment_id: 19,
+                    body: 'first comment lol.',
+                    article_id: 7,
+                    author: 'butter_bridge',
+                    votes: 0,
+                    created_at: expect.any(String),
+                })
+            })
+    });
+    test('400: Should return an error message when the body passed in does not have a valid input', () => {
+        const commentData = { name: "butter_bridge", body: "first comment lol." };
+        return request(app)
+            .post("/api/articles/7/comments")
+            .send(commentData)
+            .expect(400)
+            .then((response) => {
+                expect(response.body.msg).toBe("Bad Request: invalid request body")
+            });
+    });
+    test('400: Should return a message when the user sent in the body does not exist.', () => {
+        const commentData = { username: "Stuart", body: "first comment lol." };
+        return request(app)
+            .post("/api/articles/7/comments")
+            .send(commentData)
+            .expect(400)
+            .then((response) => {
+                expect(response.body.msg).toBe(`Bad Request: User 'Stuart' does not exist.`)
+            });
+    });
+    test('404: Should return an error with a message when the article_id does not exist.', () => {
+        const commentData = { username: "butter_bridge", body: "first comment lol." };
+        return request(app)
+            .post("/api/articles/90/comments")
+            .send(commentData)
+            .expect(404)
+            .then((response) => {
+                expect(response.body.msg).toBe(`Not Found: article_id does not exist.`)
+            });
+    });
+    test('400: Should return an error message when the article_id input is invalid ', () => {
+        const commentData = { username: "butter_bridge", body: "first comment lol." };
+        return request(app)
+            .post("/api/articles/bad_id/comments")
+            .send(commentData)
+            .expect(400)
+            .then((response) => {
+                expect(response.body.msg).toBe("Bad Request: Invalid article_id format.")
+            });
+    });
+});
+
+describe('PATCH /api/articles/:article_id', () => {
+    test('200: Should update the specified article votes by 1', () => {
+        const votesObj = { inc_votes: 1 };
+        return request(app)
+            .patch("/api/articles/1")
+            .send(votesObj)
+            .expect(200)
+            .then((response) => {
+                const article = response.body.article;
+                expect(Object.keys(article)).toHaveLength(8);
+                expect(article).toMatchObject({
+                    article_id: 1,
+                    title: expect.any(String),
+                    topic: expect.any(String),
+                    author: expect.any(String),
+                    body: expect.any(String),
+                    created_at: expect.any(String),
+                    votes: 101,
+                    article_img_url: expect.any(String),
+                });
+            });
+    });
+    test('200: Should update the specified article votes by 10', () => {
+        const votesObj = { inc_votes: 10 };
+        return request(app)
+            .patch("/api/articles/1")
+            .send(votesObj)
+            .expect(200)
+            .then((response) => {
+                const article = response.body.article;
+                expect(Object.keys(article)).toHaveLength(8);
+                expect(article).toMatchObject({
+                    article_id: 1,
+                    title: expect.any(String),
+                    topic: expect.any(String),
+                    author: expect.any(String),
+                    body: expect.any(String),
+                    created_at: expect.any(String),
+                    votes: 110,
+                    article_img_url: expect.any(String),
+                });
+            });
+    });
+    test('200: Should update with additional keys so long as there is an "inc_votes" key', () => {
+        const votesObj = { inc_votes: 1, extraVotes: "100" };
+        return request(app)
+            .patch("/api/articles/1")
+            .send(votesObj)
+            .expect(200)
+            .then((response) => {
+                const article = response.body.article;
+                expect(Object.keys(article)).toHaveLength(8);
+                expect(article).toMatchObject({
+                    article_id: 1,
+                    title: expect.any(String),
+                    topic: expect.any(String),
+                    author: expect.any(String),
+                    body: expect.any(String),
+                    created_at: expect.any(String),
+                    votes: 101,
+                    article_img_url: expect.any(String),
+                });
+            });
+    });
+    test('200: Should also decrement votes when passed a negative value from JSON object.', () => {
+        const votesObj = { inc_votes: -10 };
+        return request(app)
+            .patch("/api/articles/1")
+            .send(votesObj)
+            .expect(200)
+            .then((response) => {
+                const article = response.body.article;
+                expect(Object.keys(article)).toHaveLength(8);
+                expect(article).toMatchObject({
+                    article_id: 1,
+                    title: expect.any(String),
+                    topic: expect.any(String),
+                    author: expect.any(String),
+                    body: expect.any(String),
+                    created_at: expect.any(String),
+                    votes: 90,
+                    article_img_url: expect.any(String),
+                });
+            });
+    });
+    test('404: Should return an error when the article_id does not exist', () => {
+        const votesObj = { inc_votes: 1 };
+        return request(app)
+            .patch("/api/articles/142")
+            .send(votesObj)
+            .expect(404)
+            .then((response) => {
+                expect(response.body.msg).toBe("Not Found: article_id does not exist.");
+            });
+    });
+    test('400: Should return an error when the request body is invalid', () => {
+        const votesObj = { notVotes: "1" };
+        return request(app)
+            .patch("/api/articles/1")
+            .send(votesObj)
+            .expect(400)
+            .then((response) => {
+                expect(response.body.msg).toBe("Bad Request: invalid request body");
+            });
+    });
+    test('400: Should return an error with a message when the article_id is invalid', () => {
+        const votesObj = { notVotes: "1" };
+        return request(app)
+            .patch("/api/articles/bad_id")
+            .send(votesObj)
+            .expect(400)
+            .then((response) => {
+                expect(response.body.msg).toBe("Bad Request: Invalid article_id format.");
+            });
+    });
+});
+

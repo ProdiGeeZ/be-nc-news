@@ -1,4 +1,5 @@
 const db = require("../db/connection.js");
+const format = require('pg-format');
 
 exports.selectArticleById = (article_id) => {
     const queryString = `SELECT * FROM articles WHERE article_id = $1;`;
@@ -29,4 +30,18 @@ exports.fetchArticles = () => {
         .then((result) => {
         return result.rows;
     })
+}
+
+exports.addVotes = (article_id, votesObj) => {
+    const {inc_votes} = votesObj
+    const queryString = `
+        UPDATE articles
+        SET votes = votes + $1
+        WHERE article_id = $2
+        RETURNING *;
+    `;
+    return db.query(queryString, [inc_votes, article_id])
+        .then((result) => {
+            return result.rows[0];
+        });
 }
