@@ -62,5 +62,19 @@
         "article_img_url": "http://example.com/image.jpg"
       }
     }
+  },
+  "POST/api/articles/:article_id/comments": {
+    "description": "Post a comment to the given article_id",
+    "queries": ["article_id"],
+    "exampleResponse": {
+      "article": {
+        "comment_id": 19,
+        "body": "first comment lol.",
+        "article_id": 7,
+        "author": "butter_bridge",
+        "votes": 0,
+        "created_at": "expect.any(String)"
+      }
+    }
   }
 }
