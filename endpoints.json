@@ -63,6 +63,32 @@
       }
     }
   },
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
   "POST/api/articles/:article_id/comments": {
     "description": "Post a comment to the given article_id",
     "queries": ["article_id"],
