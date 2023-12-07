@@ -9,6 +9,7 @@ app.get("/api/articles/:article_id", controllers.getArticleById);
 app.get('/api/articles/:article_id/comments', controllers.getArticleComments);
 app.post("/api/articles/:article_id/comments", controllers.postComment);
 app.patch("/api/articles/:article_id", controllers.updateVotes)
+app.delete("/api/comments/:comment_id", controllers.deleteCommentById)
 app.get("/api", controllers.getDocs);
 app.all("*", controllers.send404);
 
@@ -16,7 +17,7 @@ app.use((err, req, res, next) => {
     const status = err.status || 500;
     const message = err.msg || "Internal Server Error";
     if(err.code === '22P02'){
-        return res.status(400).send({msg: "Bad Request: Invalid article_id format."});
+        return res.status(400).send({msg: "Bad Request: Invalid request format."});
     }
     else if (err.code === '23502') {
         return res.status(400).send({msg: "Bad Request: invalid request body"})

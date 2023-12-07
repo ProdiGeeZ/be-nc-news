@@ -21,3 +21,15 @@ exports.postComment = (req, res, next) => {
         })
         .catch(next);
 };
+
+exports.deleteCommentById = (req, res, next) => {
+    const { comment_id } = req.params;
+    return models.commentCheck(comment_id)
+        .then((comment_id) => {
+            return models.deleteCommentById(comment_id)
+        })
+        .then((deletedComment) => {
+            res.status(204).send({ deletedComment })
+        })
+        .catch(next);
+}
