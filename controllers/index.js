@@ -3,6 +3,7 @@ const { getArticleById, getAllArticles, updateVotes } = require('./articles.cont
 const { getDocs } = require('./docs.controller.js');
 const { send404 } = require('./errors.controller.js');
 const { getArticleComments, postComment, deleteCommentById } = require('./comments.controller.js')
+const {getAllUsers} = require('./users.controllers.js')
 
 module.exports = {
     getTopics,
@@ -13,5 +14,6 @@ module.exports = {
     getArticleComments,
     postComment,
     updateVotes,
-    deleteCommentById
+    deleteCommentById,
+    getAllUsers
 };

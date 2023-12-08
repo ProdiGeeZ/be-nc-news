@@ -10,6 +10,7 @@ app.get('/api/articles/:article_id/comments', controllers.getArticleComments);
 app.post("/api/articles/:article_id/comments", controllers.postComment);
 app.patch("/api/articles/:article_id", controllers.updateVotes)
 app.delete("/api/comments/:comment_id", controllers.deleteCommentById)
+app.get("/api/users", controllers.getAllUsers)
 app.get("/api", controllers.getDocs);
 app.all("*", controllers.send404);
 
