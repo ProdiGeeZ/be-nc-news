@@ -13,24 +13,52 @@ exports.selectArticleById = (article_id) => {
         })
 };
 
-exports.fetchArticles = () => {
-    const queryString = `
-    SELECT
-        a.author,
-        a.title,
-        a.article_id,
-        a.topic,
-        a.created_at,
-        a.votes,
-        a.article_img_url,
-        (SELECT COUNT(c.comment_id)::int FROM comments c WHERE c.article_id = a.article_id) AS comment_count
-        FROM articles a
-    ORDER BY a.created_at DESC`;
-    return db.query(queryString)
-        .then((result) => {
-        return result.rows;
-    })
-}
+exports.fetchArticles = (topic) => {
+    let topicCheck;
+
+    // If topic is provided and is not an empty string, check if it exists
+    if (topic) {
+        topicCheck = db.query('SELECT * FROM topics WHERE slug = $1', [topic])
+            .then((result) => {
+                if (!result.rows[0]) {
+                    return Promise.reject({ status: 404, msg: `Not Found: topic '${topic}' does not exist.` });
+                }
+            });
+    } else {
+        // If no topic is provided or if it's an empty string, skip the check
+        topicCheck = Promise.resolve();
+    }
+
+    return topicCheck.then(() => {
+        let queryString = `
+            SELECT
+                a.author,
+                a.title,
+                a.article_id,
+                a.topic,
+                a.created_at,
+                a.votes,
+                a.article_img_url,
+                (SELECT COUNT(c.comment_id)::int FROM comments c WHERE c.article_id = a.article_id) AS comment_count
+            FROM articles a
+        `;
+
+        const queryParams = [];
+
+        if (topic) {
+            queryString += ` WHERE a.topic = $1`;
+            queryParams.push(topic);
+        }
+
+        queryString += ` ORDER BY a.created_at DESC`;
+
+        return db.query(queryString, queryParams)
+            .then((result) => result.rows);
+    });
+};
+
+
+
 
 exports.addVotes = (article_id, votesObj) => {
     const {inc_votes} = votesObj
@@ -45,3 +73,13 @@ exports.addVotes = (article_id, votesObj) => {
             return result.rows[0];
         });
 }
+
+exports.topicCheck = (topic) => {
+    return db.query('SELECT * FROM topics WHERE topic = $1', [topic])
+        .then((result) => {
+            if (!result.rows[0]) {
+                return Promise.reject({ status: 404, msg: `Not Found: topic '${topic}' does not exist.` });
+            }
+            return topic;
+        });
+};

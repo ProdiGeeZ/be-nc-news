@@ -6,3 +6,4 @@ exports.fetchUsers = () => {
         return users.rows;
     })
 }
+

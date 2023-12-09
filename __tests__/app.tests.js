@@ -424,7 +424,7 @@ describe("DELETE /api/comments/:comment_id", () => {
     });
 });
 
-describe.only('GET /api/users', () => {
+describe('GET /api/users', () => {
     test('200: should return an object array of users with the correct keys.', () => {
         return request(app)
             .get("/api/users")
@@ -439,5 +439,57 @@ describe.only('GET /api/users', () => {
                     });
                 })
             })
+    });
+});
+
+describe('GET /api/articles?topic=:topic', () => {
+    test('200: Should return articles of with the given topic', () => {
+        return request(app)
+            .get("/api/articles?topic=mitch")
+            .expect(200)
+            .then((response) => {
+                articles = response.body.articles
+                articles.forEach((article) => {
+                    expect(article).toMatchObject({
+                        article_id: expect.any(Number),
+                        title: expect.any(String),
+                        topic: 'mitch',
+                        author: expect.any(String),
+                        created_at: expect.any(String),
+                        votes: expect.any(Number),
+                        article_img_url: expect.any(String),
+                    });
+                })
+            })
+    });
+    test('404: Should return articles of with the given topic', () => {
+        return request(app)
+            .get("/api/articles?topic=coffee")
+            .expect(404)
+            .then((response) => {
+                expect(response.body.msg).toBe("Not Found: topic 'coffee' does not exist.");
+            })
+    });
+    test('200: Should return all topics when topic query is not defined.', () => {
+        return request(app)
+            .get("/api/articles?topic=")
+            .expect(200)
+            .then((response) => {
+                const articles = response.body.articles;
+                expect(articles).toHaveLength(13);
+                articles.forEach(article => {
+                    expect(article).toMatchObject({
+                        author: expect.any(String),
+                        title: expect.any(String),
+                        article_id: expect.any(Number),
+                        topic: expect.any(String),
+                        created_at: expect.any(String),
+                        votes: expect.any(Number),
+                        article_img_url: expect.any(String),
+                        comment_count: expect.any(Number),
+                    });
+
+                });
+            });
     });
 });
