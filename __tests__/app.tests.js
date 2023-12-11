@@ -462,14 +462,6 @@ describe('GET /api/articles?topic=:topic', () => {
                 })
             })
     });
-    test('404: Should return articles of with the given topic', () => {
-        return request(app)
-            .get("/api/articles?topic=coffee")
-            .expect(404)
-            .then((response) => {
-                expect(response.body.msg).toBe("Not Found: topic 'coffee' does not exist.");
-            })
-    });
     test('200: Should return all topics when topic query is not defined.', () => {
         return request(app)
             .get("/api/articles?topic=")
@@ -491,5 +483,13 @@ describe('GET /api/articles?topic=:topic', () => {
 
                 });
             });
+    });
+    test('404: Should return an error msg when the topic does not exist', () => {
+        return request(app)
+            .get("/api/articles?topic=coffee")
+            .expect(404)
+            .then((response) => {
+                expect(response.body.msg).toBe("Not Found: topic 'coffee' does not exist.");
+            })
     });
 });

@@ -112,5 +112,25 @@
         "created_at": "expect.any(String)"
       }
     }
+  },
+  "DELETE /api/comments/:comment_id": {
+    "description": "Deletes a comment by its id",
+    "queries": ["comment_id"],
+    "exampleResponse": {
+      "msg": "Comment deleted"
+    }
+  },
+  "GET /api/users": {
+    "description": "serves an array of all users",
+    "queries": [],
+    "exampleResponse": {
+      "users": [
+        {
+          "username": "example_user",
+          "name": "Example Name",
+          "avatar_url": "http://example.com/avatar.jpg"
+        }
+      ]
+    }
   }
 }
