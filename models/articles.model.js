@@ -14,20 +14,16 @@ exports.selectArticleById = (article_id) => {
 };
 
 exports.fetchArticles = (topic) => {
-    let topicCheck;
-
-    // If topic is provided and is not an empty string, check if it exists
-    if (topic) {
-        topicCheck = db.query('SELECT * FROM topics WHERE slug = $1', [topic])
+    const checkTopicExists = (topic) => {
+        return db.query('SELECT * FROM topics WHERE slug = $1', [topic])
             .then((result) => {
-                if (!result.rows[0]) {
-                    return Promise.reject({ status: 404, msg: `Not Found: topic '${topic}' does not exist.` });
+                if (!result.rows.length) {
+                    throw { status: 404, msg: `Not Found: topic '${topic}' does not exist.` };
                 }
             });
-    } else {
-        // If no topic is provided or if it's an empty string, skip the check
-        topicCheck = Promise.resolve();
-    }
+    };
+
+    let topicCheck = topic ? checkTopicExists(topic) : Promise.resolve();
 
     return topicCheck.then(() => {
         let queryString = `
@@ -56,6 +52,8 @@ exports.fetchArticles = (topic) => {
             .then((result) => result.rows);
     });
 };
+
+
 
 
 

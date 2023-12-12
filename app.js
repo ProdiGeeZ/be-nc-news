@@ -17,6 +17,7 @@ app.get("/api", controllers.getDocs);
 app.all("*", controllers.send404);
 
 app.use((err, req, res, next) => {
+    console.log(err);
     const status = err.status || 500;
     const message = err.msg || "Internal Server Error";
     if(err.code === '22P02'){
@@ -32,17 +33,3 @@ app.use((err, req, res, next) => {
 });
 
 module.exports = app;
-
-/*
-
-CORE: GET /api/articles (topic query)
-Description
-FEATURE REQUEST The endpoint should also accept the following query:
-
-topic, which filters the articles by the topic value specified in the query. If the query is omitted, the endpoint should respond with all articles.
-Consider what errors could occur with this endpoint, and make sure to test for them.
-
-You should not have to amend any previous tests.
-
-Remember to add a description of this endpoint to your /api endpoint.
-*/

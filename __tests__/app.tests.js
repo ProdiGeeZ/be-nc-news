@@ -442,7 +442,7 @@ describe('GET /api/users', () => {
     });
 });
 
-describe('GET /api/articles?topic=:topic', () => {
+describe.only('GET /api/articles?topic=:topic', () => {
     test('200: Should return articles of with the given topic', () => {
         return request(app)
             .get("/api/articles?topic=mitch")
