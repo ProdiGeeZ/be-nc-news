@@ -449,6 +449,7 @@ describe.only('GET /api/articles?topic=:topic', () => {
             .expect(200)
             .then((response) => {
                 articles = response.body.articles
+                console.log(articles);
                 articles.forEach((article) => {
                     expect(article).toMatchObject({
                         article_id: expect.any(Number),

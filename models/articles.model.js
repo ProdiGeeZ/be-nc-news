@@ -1,5 +1,4 @@
 const db = require("../db/connection.js");
-const format = require('pg-format');
 
 exports.selectArticleById = (article_id) => {
     const queryString = `SELECT * FROM articles WHERE article_id = $1;`;
@@ -52,11 +51,6 @@ exports.fetchArticles = (topic) => {
             .then((result) => result.rows);
     });
 };
-
-
-
-
-
 
 exports.addVotes = (article_id, votesObj) => {
     const {inc_votes} = votesObj
