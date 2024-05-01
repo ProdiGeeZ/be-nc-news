@@ -565,7 +565,7 @@ describe('GET /api/articles?topic=:topic', () => {
     });
 });
 
-describe.only('GET /api/users/:username', () => {
+describe('GET /api/users/:username', () => {
     test('200: Should return an object containing all the keys from the username specified', () => {
         return request(app)
             .get("/api/users/icellusedkars")
@@ -590,4 +590,89 @@ describe.only('GET /api/users/:username', () => {
             });
     });
     //Test for invalid format for username?
+});
+
+describe.only('PATCH /api/comments/:comment_id', () => {
+    test('200: increments votes by the correct amount and returns the updated comment', async () => {
+        const votesObj = { inc_votes: 1 };
+        return request(app)
+            .patch("/api/comments/1")
+            .send(votesObj)
+            .expect(200)
+            .then((response) => {
+                const updatedComment = response.body.patchedComment
+                expect(updatedComment).toMatchObject({
+                    comment_id: 1,
+                    body: "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+                    article_id: 9,
+                    author: 'butter_bridge',
+                    votes: 17,
+                    created_at: '2020-04-06T12:17:00.000Z'
+                });
+            })
+    });
+    test('200: Should update the specified comment votes by 10', () => {
+        const votesObj = { inc_votes: 10 };
+        return request(app)
+            .patch("/api/comments/1")
+            .send(votesObj)
+            .expect(200)
+            .then((response) => {
+                const comment = response.body.patchedComment;
+                expect(comment).toMatchObject({
+                    comment_id: 1,
+                    author: expect.any(String),
+                    body: expect.any(String),
+                    created_at: expect.any(String),
+                    votes: 26, 
+                });
+            });
+    });
+    test('200: Should also decrement votes when passed a negative value from JSON object.', () => {
+        const votesObj = { inc_votes: -10 };
+        return request(app)
+            .patch("/api/comments/1")
+            .send(votesObj)
+            .expect(200)
+            .then((response) => {
+                const comment = response.body.patchedComment;
+                expect(comment).toMatchObject({
+                    comment_id: 1,
+                    author: expect.any(String),
+                    body: expect.any(String),
+                    created_at: expect.any(String),
+                    votes: 6, 
+                });
+            });
+    });
+    test('404: Should return an error when the comment_id does not exist', () => {
+        const votesObj = { inc_votes: 1 };
+        return request(app)
+            .patch("/api/comments/9999") 
+            .send(votesObj)
+            .expect(404)
+            .then((response) => {
+                expect(response.body.msg).toBe("Not Found: comment_id does not exist.");
+            });
+    });
+    test('400: Should return an error when the request body is invalid', () => {
+        const votesObj = { notVotes: "1" };
+        return request(app)
+            .patch("/api/comments/1")
+            .send(votesObj)
+            .expect(400)
+            .then((response) => {
+                expect(response.body.msg).toBe("Bad Request: invalid request body");
+            });
+    });
+    test('400: Should return an error with a message when the comment_id is invalid', () => {
+        const votesObj = { inc_votes: 1 };
+        return request(app)
+            .patch("/api/comments/bad_id")
+            .send(votesObj)
+            .expect(400)
+            .then((response) => {
+                expect(response.body.msg).toBe("Bad Request: Invalid request format.");
+            });
+    });
 });

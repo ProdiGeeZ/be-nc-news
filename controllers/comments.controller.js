@@ -33,3 +33,16 @@ exports.deleteCommentById = (req, res, next) => {
         })
         .catch(next);
 }
+
+exports.voteCommentById = (req, res, next) => {
+    const { comment_id } = req.params;
+    const votesObj = req.body;
+    return models.commentCheck(comment_id)
+        .then((comment_id) => {
+            return models.patchCommentById(comment_id, votesObj)
+        })
+        .then((patchedComment) => {
+            res.status(200).send({ patchedComment })
+        })
+        .catch(next);
+}
