@@ -96,7 +96,7 @@
         "article_id": 7,
         "author": "butter_bridge",
         "votes": 0,
-        "created_at": "expect.any(String)"
+        "created_at": "2020-11-03T21:00:00.000Z"
       }
     }
   },
@@ -109,8 +109,22 @@
         "body": "first comment lol.",
         "article_id": 7,
         "author": "butter_bridge",
+        "votes": 2,
+        "created_at": "2020-11-03T21:00:00.000Z"
+      }
+    }
+  },
+  "PATCH /api/comments/:comment_id": {
+    "description": "increment/decrement the number of votes on a comment.",
+    "queries": ["comment_id", {"inc_votes": 1}],
+    "exampleResponse": {
+      "article": {
+        "comment_id": 19,
+        "body": "first comment lol.",
+        "article_id": 7,
+        "author": "butter_bridge",
         "votes": 1,
-        "created_at": "expect.any(String)"
+        "created_at": "2020-11-03T21:00:00.000Z"
       }
     }
   },

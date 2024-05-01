@@ -61,6 +61,21 @@ exports.deleteCommentById = (comment_id) => {
         })
 }
 
+exports.patchCommentById = (comment_id, votesObj) => {
+    const { inc_votes } = votesObj;
+    const queryString = `
+        UPDATE comments
+        SET votes = votes + $1
+        WHERE comment_id = $2
+        RETURNING *;
+    `;
+
+    return db.query(queryString, [inc_votes, comment_id])
+        .then((result) => {
+            return result.rows[0];
+        });
+}
+
 exports.commentCheck = (comment_id) => {
     return db.query('SELECT * FROM comments WHERE comment_id = $1', [comment_id])
         .then(result => {

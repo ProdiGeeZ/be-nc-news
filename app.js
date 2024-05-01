@@ -8,17 +8,20 @@ app.use(express.json());
 app.get("/api", controllers.getDocs);
 app.get("/api/topics", controllers.getTopics);
 app.get("/api/articles", controllers.getAllArticles);
-app.delete("/api/comments/:comment_id", controllers.deleteCommentById)
 app.get("/api/users", controllers.getAllUsers)
 app.get("/api/users/:username", controllers.getUserById)
 
+app.route("/api/comments/:comment_id")
+    .delete(controllers.deleteCommentById)
+    .patch(controllers.voteCommentById);
+
 app.route('/api/articles/:article_id')
-    .get(controllers.getArticleById)  
-    .patch(controllers.updateVotes);    
+    .get(controllers.getArticleById)
+    .patch(controllers.updateVotes);
 
 app.route('/api/articles/:article_id/comments')
-    .get(controllers.getArticleComments) 
-    .post(controllers.postComment);      
+    .get(controllers.getArticleComments)
+    .post(controllers.postComment);
 
 app.all("*", controllers.send404);
 
