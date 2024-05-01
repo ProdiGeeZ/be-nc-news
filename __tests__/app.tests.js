@@ -56,7 +56,7 @@ describe('GET /api', () => {
     });
 });
 
-describe.only('GET /api/articles/:article_id', () => {
+describe('GET /api/articles/:article_id', () => {
     test('200: Should return an article object with the correct keys', () => {
         return request(app)
             .get("/api/articles/1")
@@ -94,7 +94,7 @@ describe.only('GET /api/articles/:article_id', () => {
     });
 });
 
-describe('GET /api/articles', () => {
+describe.only('GET /api/articles', () => {
     test('200: Should return an array containing all article objects with correct keys', () => {
         return request(app)
             .get("/api/articles")
@@ -124,6 +124,76 @@ describe('GET /api/articles', () => {
                 const articles = response.body.articles;
                 expect(articles).toHaveLength(13);
                 expect(articles).toBeSorted('created_at', { descending: true })
+            });
+    });
+    test('200: Should return articles sorted by the key given after sort_by votes descending by default', () => {
+        return request(app)
+            .get("/api/articles?sort_by=votes")
+            .expect(200)
+            .then((response) => {
+                const articles = response.body.articles;
+                expect(articles).toHaveLength(13);
+                expect(articles).toBeSorted('votes', { descending: true })
+            });
+    });
+    test('200: Should return articles sorted by the key given after sort_by votes ascending', () => {
+        return request(app)
+            .get("/api/articles?sort_by=votes")
+            .expect(200)
+            .then((response) => {
+                const articles = response.body.articles;
+                expect(articles).toHaveLength(13);
+                expect(articles).toBeSorted('votes', { ascending: true });
+            });
+    });
+    test('200: Should return articles sorted by the key given after sort_by author descending', () => {
+        return request(app)
+            .get("/api/articles?sort_by=author")
+            .expect(200)
+            .then((response) => {
+                const articles = response.body.articles;
+                expect(articles).toHaveLength(13);
+                expect(articles).toBeSorted('author', { descending: true });
+            });
+    });
+    test('200: Should return articles sorted by the key given after sort_by title descending', () => {
+        return request(app)
+            .get("/api/articles?sort_by=title")
+            .expect(200)
+            .then((response) => {
+                const articles = response.body.articles;
+                expect(articles).toHaveLength(13);
+                expect(articles).toBeSorted('author', { descending: true });
+            });
+    });
+    test('200: Should return articles sorted by the key given after sort_by topic descending', () => {
+        return request(app)
+            .get("/api/articles?sort_by=title")
+            .expect(200)
+            .then((response) => {
+                const articles = response.body.articles;
+                expect(articles).toHaveLength(13);
+                expect(articles).toBeSorted('topic', { descending: true });
+            });
+    });
+    test('400: Should return an error message for bad request for the sort by query', () => {
+        const sort_by = 'eggs'
+        return request(app)
+            .get(`/api/articles?sort_by=${sort_by}`)
+            .expect(400)
+            .then((response) => {
+                const message = response.body.msg;
+                expect(message).toEqual(`Bad Request: invalid sort_by parameter "${sort_by}"`)
+            });
+    });
+    test('400: Should return an error message for bad request for the order query', () => {
+        const order = 'downwards'
+        return request(app)
+            .get(`/api/articles?order=${order}`)
+            .expect(400)
+            .then((response) => {
+                const message = response.body.msg;
+                expect(message).toEqual(`Bad Request: order must be "asc" or "desc", got "${order}"`)
             });
     });
 });
@@ -377,7 +447,7 @@ describe('PATCH /api/articles/:article_id', () => {
             });
     });
     test('400: Should return an error with a message when the article_id is invalid', () => {
-        const votesObj = { notVotes: "1" };
+        const votesObj = { inc_votes: "1" };
         return request(app)
             .patch("/api/articles/bad_id")
             .send(votesObj)

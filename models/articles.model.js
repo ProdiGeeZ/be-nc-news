@@ -24,7 +24,10 @@ exports.selectArticleById = (article_id) => {
         })
 };
 
-exports.fetchArticles = (topic) => {
+exports.fetchArticles = (topic, sort_by = 'created_at', order = 'desc') => {
+    const validSortColumns = ['author', 'title', 'topic', 'created_at', 'votes'];
+    const validOrderColumns = ['asc', 'desc'];
+    
     const checkTopicExists = (topic) => {
         return db.query('SELECT * FROM topics WHERE slug = $1', [topic])
             .then((result) => {
@@ -33,6 +36,13 @@ exports.fetchArticles = (topic) => {
                 }
             });
     };
+
+    if (!validSortColumns.includes(sort_by)) {
+        throw { status: 400, msg: `Bad Request: invalid sort_by parameter "${sort_by}"` };
+    }
+    if (!validOrderColumns.includes(order)) {
+        throw { status: 400, msg: `Bad Request: order must be "asc" or "desc", got "${order}"` };
+    }
 
     let topicCheck = topic ? checkTopicExists(topic) : Promise.resolve();
 
@@ -57,7 +67,7 @@ exports.fetchArticles = (topic) => {
             queryParams.push(topic);
         }
 
-        queryString += ` ORDER BY a.created_at DESC`;
+        queryString += ` ORDER BY a.${sort_by.toLowerCase()} ${order.toLowerCase()}`;
 
         return db.query(queryString, queryParams)
             .then((result) => result.rows);
