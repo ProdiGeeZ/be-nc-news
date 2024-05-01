@@ -94,7 +94,7 @@ describe('GET /api/articles/:article_id', () => {
     });
 });
 
-describe.only('GET /api/articles', () => {
+describe('GET /api/articles', () => {
     test('200: Should return an array containing all article objects with correct keys', () => {
         return request(app)
             .get("/api/articles")
