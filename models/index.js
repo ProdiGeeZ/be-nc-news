@@ -1,7 +1,7 @@
 const { fetchTopics } = require('./topics.model.js');
 const { selectArticleById, fetchArticles, addVotes, topicCheck } = require('./articles.model.js');
 const { fetchArticleComments, addComment, articleCheck, commentCheck, deleteCommentById } = require('./comments.model.js')
-const { fetchUsers } = require('./users.model.js');
+const { fetchUsers, fetchUserById } = require('./users.model.js');
 
 module.exports = {
     fetchTopics,
@@ -14,5 +14,6 @@ module.exports = {
     commentCheck,
     deleteCommentById,
     fetchUsers,
-    topicCheck
+    topicCheck,
+    fetchUserById
 };

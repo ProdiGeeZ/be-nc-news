@@ -552,7 +552,6 @@ describe('GET /api/articles?topic=:topic', () => {
                         article_img_url: expect.any(String),
                         comment_count: expect.any(Number),
                     });
-
                 });
             });
     });
@@ -564,4 +563,31 @@ describe('GET /api/articles?topic=:topic', () => {
                 expect(response.body.msg).toBe("Not Found: topic 'coffee' does not exist.");
             })
     });
+});
+
+describe.only('GET /api/users/:username', () => {
+    test('200: Should return an object containing all the keys from the username specified', () => {
+        return request(app)
+            .get("/api/users/icellusedkars")
+            .expect(200)
+            .then((response) => {
+                const user = response.body.user;
+                expect(user).toMatchObject({
+                    username: 'icellusedkars',
+                    name: 'sam',
+                    avatar_url: 'https://avatars2.githubusercontent.com/u/24604688?s=460&v=4'
+                });
+            })
+    });
+    test('404: Should return an error if the username does not exist', () => {
+        return request(app)
+            .get("/api/users/nonexistentuser")
+            .expect(404)
+            .then((response) => {
+                expect(response.body).toEqual({
+                    msg: 'User not found'
+                });
+            });
+    });
+    //Test for invalid format for username?
 });
