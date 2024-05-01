@@ -48,7 +48,7 @@
     }
   },
   "GET /api/articles/:article_id": {
-    "description": "Get an article by its id",
+    "description": "Get an article by its id along with the number of comments it has",
     "queries": ["article_id"],
     "exampleResponse": {
       "article": {
@@ -59,7 +59,8 @@
         "topic": "example_topic",
         "created_at": "2023-01-01T00:00:00.000Z",
         "votes": 10,
-        "article_img_url": "http://example.com/image.jpg"
+        "article_img_url": "http://example.com/image.jpg",
+        "comment_count": 5
       }
     }
   },
