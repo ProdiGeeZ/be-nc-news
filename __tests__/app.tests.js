@@ -56,7 +56,7 @@ describe('GET /api', () => {
     });
 });
 
-describe('GET /api/articles/:article_id', () => {
+describe.only('GET /api/articles/:article_id', () => {
     test('200: Should return an article object with the correct keys', () => {
         return request(app)
             .get("/api/articles/1")
@@ -72,6 +72,7 @@ describe('GET /api/articles/:article_id', () => {
                     created_at: expect.any(String),
                     votes: expect.any(Number),
                     article_img_url: expect.any(String),
+                    comment_count: expect.any(Number)
                 });
             });
     });
@@ -442,7 +443,7 @@ describe('GET /api/users', () => {
     });
 });
 
-describe.only('GET /api/articles?topic=:topic', () => {
+describe('GET /api/articles?topic=:topic', () => {
     test('200: Should return articles of with the given topic', () => {
         return request(app)
             .get("/api/articles?topic=mitch")
