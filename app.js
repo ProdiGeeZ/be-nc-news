@@ -5,11 +5,12 @@ app.use(cors());
 const controllers = require('./controllers');
 app.use(express.json());
 
+app.get("/api", controllers.getDocs);
 app.get("/api/topics", controllers.getTopics);
 app.get("/api/articles", controllers.getAllArticles);
 app.delete("/api/comments/:comment_id", controllers.deleteCommentById)
 app.get("/api/users", controllers.getAllUsers)
-app.get("/api", controllers.getDocs);
+app.get("/api/users/:username", controllers.getUserById)
 
 app.route('/api/articles/:article_id')
     .get(controllers.getArticleById)  
