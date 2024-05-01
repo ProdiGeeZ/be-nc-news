@@ -1,7 +1,19 @@
 const db = require("../db/connection.js");
 
 exports.selectArticleById = (article_id) => {
-    const queryString = `SELECT * FROM articles WHERE article_id = $1;`;
+    const queryString = `SELECT 
+    a.author,
+    a.title,
+    a.article_id,
+    a.body,
+    a.topic,
+    a.created_at,
+    a.votes,
+    a.article_img_url,
+    CAST((SELECT COUNT(c.comment_id) FROM comments c WHERE c.article_id = a.article_id) AS INTEGER) AS comment_count
+    FROM articles a
+    WHERE a.article_id = $1;
+    `;
 
     return db.query(queryString, [article_id])
         .then((result) => {
