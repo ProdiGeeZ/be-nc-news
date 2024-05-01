@@ -127,11 +127,31 @@
     "exampleResponse": {
       "users": [
         {
+          "username": "example_user1",
+          "name": "Example Name1",
+          "avatar_url": "http://example.com/avatar1.jpg"
+        },
+        {
+          "username": "example_user2",
+          "name": "Example Name2",
+          "avatar_url": "http://example.com/avatar2.jpg"
+        },
+        {
+          "username": "example_user3",
+          "name": "Example Name3",
+          "avatar_url": "http://example.com/avatar3.jpg"
+        }
+      ]
+    }
+  },
+  "GET /api/users/:username": {
+    "description": "serves an array of all users",
+    "queries": ["username"],
+    "exampleResponse": 
+        {
           "username": "example_user",
           "name": "Example Name",
           "avatar_url": "http://example.com/avatar.jpg"
         }
-      ]
-    }
   }
 }
