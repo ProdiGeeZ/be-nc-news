@@ -15,7 +15,10 @@ const config = {};
 if (ENV === 'production') {
   config.connectionString = process.env.DATABASE_URL;
   config.ssl = { rejectUnauthorized: false };
-  config.max = 2;
+  config.max = 10;
+} else if (ENV === 'test') {
+  config.connectionString = process.env.PGDATABASE;
+  config.max = 5; 
 }
 
 module.exports = new Pool(config);
