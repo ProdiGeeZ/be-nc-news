@@ -10,9 +10,9 @@ exports.getArticleById = (req, res, next) => {
 };
 
 exports.getAllArticles = (req, res, next) => {
-    const { topic } = req.query;
+    const { topic, sort_by, order } = req.query;
     
-    return models.fetchArticles(topic)
+    return models.fetchArticles(topic, sort_by, order)
     .then((articles) => {
         res.status(200).send({articles})
     })
