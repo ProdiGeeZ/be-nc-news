@@ -227,7 +227,7 @@ describe('GET /api/articles', () => {
     });
 });
 
-describe.only('GET /api/articles/:article_id/comments', () => {
+describe('GET /api/articles/:article_id/comments', () => {
     test('200: Should return an array of comments associated with the given article_id', () => {
         return request(app)
             .get("/api/articles/1/comments")
