@@ -7,3 +7,12 @@ exports.getTopics = (req, res, next) => {
         })
         .catch(next);
 };
+
+exports.postTopic = (req, res, next) => {
+    const requestBody = req.body;
+    models.addNewTopic(requestBody)
+        .then((topic) => {
+            res.status(201).send({ topic });
+        })
+        .catch(next);
+};
