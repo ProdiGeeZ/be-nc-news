@@ -47,6 +47,29 @@
       ]
     }
   },
+  "POST /api/articles": {
+    "description": "Posts a new article by the logged in user.",
+    "queries": [
+      {
+        "author": "butter_bridge",
+        "title": "New bridge discovered - Made with Margarine!",
+        "topic": "mitch",
+        "body": "A new bridge has been discovered in the North West of England. People were gobsmacked to find that it was not made of butter as you'd expect!",
+        "article_img_url": "https://images.pexels.com/photos/97050/pexels-photo-97050.jpeg?w=700&h=700"
+      }
+    ],
+    "exampleResponse": {
+      "article_id": 14,
+      "author": "butter_bridge",
+      "title": "New bridge discovered - Made with Margarine!",
+      "topic": "mitch",
+      "body": "A new bridge has been discovered in the North West of England. People were gobsmacked to find that it was not made of butter as you'd expect!",
+      "created_at": "2023-07-31T15:59:13.341Z",
+      "votes": 0,
+      "article_img_url": "https://images.pexels.com/photos/97050/pexels-photo-97050.jpeg?w=700&h=700",
+      "comment_count": 0
+    }
+  },
   "GET /api/articles/:article_id": {
     "description": "Get an article by its id along with the number of comments it has",
     "queries": ["article_id"],
@@ -88,7 +111,7 @@
   },
   "POST /api/articles/:article_id/comments": {
     "description": "Post a comment to the given article_id",
-    "queries": ["article_id", {"username" : "butter_bridge", "body" : "lol"}],
+    "queries": ["article_id", { "username": "butter_bridge", "body": "lol" }],
     "exampleResponse": {
       "article": {
         "comment_id": 19,
@@ -102,7 +125,7 @@
   },
   "PATCH /api/articles/:article_id": {
     "description": "Post a comment to the given article_id",
-    "queries": ["article_id", {"inc_votes": 1}],
+    "queries": ["article_id", { "inc_votes": 1 }],
     "exampleResponse": {
       "article": {
         "comment_id": 19,
@@ -116,7 +139,7 @@
   },
   "PATCH /api/comments/:comment_id": {
     "description": "increment/decrement the number of votes on a comment.",
-    "queries": ["comment_id", {"inc_votes": 1}],
+    "queries": ["comment_id", { "inc_votes": 1 }],
     "exampleResponse": {
       "article": {
         "comment_id": 19,
@@ -161,11 +184,10 @@
   "GET /api/users/:username": {
     "description": "serves an array of all users",
     "queries": ["username"],
-    "exampleResponse": 
-        {
-          "username": "example_user",
-          "name": "Example Name",
-          "avatar_url": "http://example.com/avatar.jpg"
-        }
+    "exampleResponse": {
+      "username": "example_user",
+      "name": "Example Name",
+      "avatar_url": "http://example.com/avatar.jpg"
+    }
   }
 }
