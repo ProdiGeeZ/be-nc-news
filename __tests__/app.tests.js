@@ -592,7 +592,7 @@ describe('GET /api/users/:username', () => {
     //Test for invalid format for username?
 });
 
-describe.only('PATCH /api/comments/:comment_id', () => {
+describe('PATCH /api/comments/:comment_id', () => {
     test('200: increments votes by the correct amount and returns the updated comment', async () => {
         const votesObj = { inc_votes: 1 };
         return request(app)
@@ -624,7 +624,7 @@ describe.only('PATCH /api/comments/:comment_id', () => {
                     author: expect.any(String),
                     body: expect.any(String),
                     created_at: expect.any(String),
-                    votes: 26, 
+                    votes: 26,
                 });
             });
     });
@@ -641,14 +641,14 @@ describe.only('PATCH /api/comments/:comment_id', () => {
                     author: expect.any(String),
                     body: expect.any(String),
                     created_at: expect.any(String),
-                    votes: 6, 
+                    votes: 6,
                 });
             });
     });
     test('404: Should return an error when the comment_id does not exist', () => {
         const votesObj = { inc_votes: 1 };
         return request(app)
-            .patch("/api/comments/9999") 
+            .patch("/api/comments/9999")
             .send(votesObj)
             .expect(404)
             .then((response) => {
@@ -676,3 +676,89 @@ describe.only('PATCH /api/comments/:comment_id', () => {
             });
     });
 });
+
+describe.only('POST /api/articles', () => {
+    test.only('201: Should respond with a response that includes author, title, body, topic, article_id, votes, created_at, and comment_count keys', () => {
+        const requestBody = {
+            author: "icellusedkars",
+            title: "New Kar for Sale",
+            body: "Hey guys look at this new kar i found at a used car garage",
+            topic: "mitch",
+            article_img_url: "https://images.unsplash.com/photo-1510253557056-5dd072a2a7ea?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8b2xkJTIwY2FyfGVufDB8MHwwfHx8MA%3D%3D"
+        }
+        return request(app)
+            .post("/api/articles")
+            .expect(201)
+            .send(requestBody)
+            .then((response) => {
+                const newArticle = response.body.newArticle;
+                expect(newArticle).toMatchObject({
+                    author: "icellusedkars",
+                    title: "New Kar for Sale",
+                    body: "Hey guys look at this new kar i found at a used car garage",
+                    topic: "mitch",
+                    article_img_url: "https://images.unsplash.com/photo-1510253557056-5dd072a2a7ea?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8b2xkJTIwY2FyfGVufDB8MHwwfHx8MA%3D%3D",
+                    article_id: expect.any(Number),
+                    votes: 0,
+                    created_at: expect.any(String),
+                    comment_count: 0
+                })
+            })
+    });
+    test('201: Should respond with a response body when posted without image url', () => {
+        const requestBody = {
+            author: "butter_bridge",
+            title: "New bridge discovered - Made with Margarine!",
+            body: "A new bridge has been discovered in the North West of England. People were gobsmacked to find that it was not made of butter as you'd expect!",
+            topic: "mitch",
+        }
+        return request(app)
+            .post("/api/articles")
+            .expect(201)
+            .send(requestBody)
+            .then((response) => {
+                const newArticle = response.body.newArticle;
+                expect(newArticle).toMatchObject({
+                    author: "butter_bridge",
+                    title: "New bridge discovered - Made with Margarine!",
+                    body: "A new bridge has been discovered in the North West of England. People were gobsmacked to find that it was not made of butter as you'd expect!",
+                    topic: "mitch",
+                    article_img_url: "https://picsum.photos/1920/1080",
+                    article_id: expect.any(Number),
+                    votes: 0,
+                    created_at: expect.any(String),
+                    comment_count: 0
+                })
+            })
+    });
+    test('400: Should return an error message if the one of more of the following keys are not provided: author, title, body, topic', () => {
+        const requestBody = {
+            author: "butter_bridge",
+            title: "Articles but without text!",
+            topic: "mitch",
+        }
+        return request(app)
+            .post("/api/articles")
+            .expect(400)
+            .send(requestBody)
+            .then((response) => {
+                expect(response.body.msg).toBe("Bad Request: invalid request body")
+            });
+    });
+    test('404: Should return an error message if the user does not exist', () => {
+        const requestBody = {
+            author: "butter_bridge",
+            title: "New bridge discovered - Made with Margarine!",
+            body: "A new bridge has been discovered in the North West of England. People were gobsmacked to find that it was not made of butter as you'd expect!",
+            topic: "mitch",
+        }
+        return request(app)
+            .post("/api/articles")
+            .expect(400)
+            .send(requestBody)
+            .then((response) => {
+                expect(response.body.msg).toBe("Bad Request: User '${req.body.username}' does not exist.")
+            });
+    });
+});
+
