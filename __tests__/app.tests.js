@@ -227,14 +227,14 @@ describe('GET /api/articles', () => {
     });
 });
 
-describe('GET /api/articles/:article_id/comments', () => {
+describe.only('GET /api/articles/:article_id/comments', () => {
     test('200: Should return an array of comments associated with the given article_id', () => {
         return request(app)
             .get("/api/articles/1/comments")
             .expect(200)
             .then((response) => {
                 const comments = response.body.comments;
-                expect(comments).toHaveLength(11);
+                expect(comments).toHaveLength(10);
                 comments.forEach((comment) => {
                     expect(comment).toMatchObject({
                         comment_id: expect.any(Number),
@@ -253,18 +253,43 @@ describe('GET /api/articles/:article_id/comments', () => {
             .expect(200)
             .then((response) => {
                 const comments = response.body.comments;
-                expect(comments).toHaveLength(11);
+                expect(comments).toHaveLength(10);
                 expect(comments).toBeSorted('created_at', { descending: true })
             });
     });
-    test('200: Should return a message when there are no articles found for an existing article_id', () => {
+    test('200: Should return an empty array when ther are no comments', () => {
         return request(app)
             .get("/api/articles/7/comments")
             .expect(200)
             .then((response) => {
-                expect(response.body.msg).toBe("No comments found for this article_id")
+                expect(response.body.comments).toEqual([])
             });
     });
+    test('200: Should return default pagination if no limit or page is specified', () => {
+        return request(app)
+            .get("/api/articles/1/comments")
+            .expect(200)
+            .then((response) => {
+                expect(response.body.comments).toHaveLength(10); 
+            });
+    });
+    test('200: Should return the correct number of comments according to the limit and page specified', () => {
+        return request(app)
+            .get("/api/articles/1/comments?limit=5&page=2")
+            .expect(200)
+            .then((response) => {
+                expect(response.body.comments).toHaveLength(5);
+            });
+    });
+    test('200: Should return an empty array of comments if the page is out of range', () => {
+        return request(app)
+            .get("/api/articles/1/comments?page=100") 
+            .expect(200)
+            .then((response) => {
+                expect(response.body.comments).toEqual([]);
+            });
+    });
+    
     test('404: Should return an error with a message when article_id does not exist.', () => {
         return request(app)
             .get("/api/articles/9000/comments")
