@@ -20,11 +20,12 @@ app.route("/api/comments/:comment_id")
     .delete(controllers.deleteCommentById)
     .patch(controllers.voteCommentById);
 
-app.route('/api/articles/:article_id')
+app.route("/api/articles/:article_id")
     .get(controllers.getArticleById)
+    .delete(controllers.deleteArticle)
     .patch(controllers.updateVotes);
 
-app.route('/api/articles/:article_id/comments')
+app.route("/api/articles/:article_id/comments")
     .get(controllers.getArticleComments)
     .post(controllers.postComment);
 

@@ -100,6 +100,11 @@
       }
     }
   },
+  "DELETE /api/articles/:article_id": {
+    "description": "Delete an article based by its article_id",
+    "queries": ["article_id"],
+    "exampleResponse": { "status": 204 }
+  },
   "GET /api/articles/:article_id/comments": {
     "description": "Retrieves all comments associated with a specified article_id, with support for pagination. The default number of comments per page is 10.",
     "queries": ["limit", "page"],
@@ -170,7 +175,7 @@
     }
   },
   "DELETE /api/comments/:comment_id": {
-    "description": "Deletes a comment by its id",
+    "description": "Deletes a comment by its comment_id",
     "queries": ["comment_id"],
     "exampleResponse": {
       "msg": "Comment deleted"

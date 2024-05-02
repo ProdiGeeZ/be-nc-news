@@ -44,3 +44,15 @@ exports.postArticle = (req, res, next) => {
         .catch(next);
 }
 
+exports.deleteArticle = (req, res, next) => {
+    const { article_id } = req.params;
+    return models.articleCheck(article_id)
+        .then((article_id) => {
+            return models.deleteArticleById(article_id)
+        })
+        .then((deletedArticle) => {
+            res.status(204).send({ deletedArticle });
+        })
+        .catch(next);
+}
+
