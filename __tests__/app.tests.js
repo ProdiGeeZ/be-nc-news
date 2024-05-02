@@ -42,6 +42,47 @@ describe("GET /api/topics", () => {
     });
 });
 
+describe.only('POST /api/topics', () => {
+    test('201: Should create a new topic and return the new row', () => {
+        const newTopic = {
+            slug: 'Rugby',
+            description: 'Sport with a squashed football where handball is allowed'
+        };
+        return request(app)
+            .post('/api/topics')
+            .send(newTopic)
+            .expect(201)
+            .then((response) => {
+                console.log(response.body.topic);
+            });
+    });
+    test('400: Should return an error if the topic slug already exists', () => {
+        const duplicateTopic = {
+            slug: 'mitch',
+            description: 'The man, the Mitch, the legend'
+        };
+        return request(app)
+            .post('/api/topics')
+            .send(duplicateTopic)
+            .expect(400)
+            .then((response) => {
+                expect(response.body.msg).toBe("Bad Request: Topic 'mitch' already exists.");
+            });
+    });
+    test('400: Should return an error if required fields are missing', () => {
+        const incompleteTopic = {
+            description: 'Missing slug field'
+        };
+        return request(app)
+            .post('/api/topics')
+            .send(incompleteTopic)
+            .expect(400)
+            .then((response) => {
+                expect(response.body.msg).toBe("Bad Request: invalid request body");
+            });
+    });
+});
+
 describe('GET /api', () => {
     test('200: should return a json object', () => {
         return request(app)
