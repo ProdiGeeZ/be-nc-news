@@ -11,7 +11,7 @@
   },
   "GET /api/articles": {
     "description": "serves an array of all articles",
-    "queries": ["author", "topic", "sort_by", "order"],
+    "queries": ["author", "topic", "sort_by", "order", "limit", "page"],
     "exampleResponse": {
       "articles": [
         {
@@ -44,7 +44,8 @@
           "article_img_url": "http://example.com/image.jpg",
           "comment_count": 256
         }
-      ]
+      ],
+      "total_count": 154
     }
   },
   "POST /api/articles": {
