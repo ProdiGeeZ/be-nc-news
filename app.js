@@ -7,9 +7,10 @@ app.use(express.json());
 
 app.get("/api", controllers.getDocs);
 app.get("/api/topics", controllers.getTopics);
-app.get("/api/articles", controllers.getAllArticles);
 app.get("/api/users", controllers.getAllUsers)
 app.get("/api/users/:username", controllers.getUserById)
+app.get("/api/articles", controllers.getAllArticles);
+app.post("/api/articles", controllers.postArticle);
 
 app.route("/api/comments/:comment_id")
     .delete(controllers.deleteCommentById)
@@ -36,7 +37,7 @@ app.use((err, req, res, next) => {
         return res.status(400).send({ msg: "Bad Request: invalid request body" });
     }
     else if (err.code === '23503') {
-        return res.status(400).send({ msg: `Bad Request: User '${req.body.username}' does not exist.` });
+        return res.status(400).send({ msg: `Bad Request: User '${req.body.username || req.body.author}' does not exist.` });
     }
     res.status(status).send({ msg: message });
 });

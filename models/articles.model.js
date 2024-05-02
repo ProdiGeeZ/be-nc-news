@@ -1,3 +1,4 @@
+const format = require("pg-format");
 const db = require("../db/connection.js");
 
 exports.selectArticleById = (article_id) => {
@@ -27,7 +28,7 @@ exports.selectArticleById = (article_id) => {
 exports.fetchArticles = (topic, sort_by = 'created_at', order = 'desc') => {
     const validSortColumns = ['author', 'title', 'topic', 'created_at', 'votes'];
     const validOrderColumns = ['asc', 'desc'];
-    
+
     const checkTopicExists = (topic) => {
         return db.query('SELECT * FROM topics WHERE slug = $1', [topic])
             .then((result) => {
@@ -75,7 +76,7 @@ exports.fetchArticles = (topic, sort_by = 'created_at', order = 'desc') => {
 };
 
 exports.addVotes = (article_id, votesObj) => {
-    const {inc_votes} = votesObj
+    const { inc_votes } = votesObj
     const queryString = `
         UPDATE articles
         SET votes = votes + $1
@@ -86,6 +87,43 @@ exports.addVotes = (article_id, votesObj) => {
         .then((result) => {
             return result.rows[0];
         });
+}
+
+exports.postNewArticle = (requestBody) => {
+    const { author, title, body, topic, article_img_url } = requestBody;
+
+    const queryStr = format(`
+    WITH new_article AS (
+        INSERT INTO articles (title, topic, author, body, article_img_url)
+        VALUES (%L, %L, %L, %L, %L)
+        RETURNING article_id, title, topic, author, body, article_img_url, created_at, votes
+    )
+    SELECT 
+        a.article_id,
+        a.author,
+        a.title,
+        a.topic,
+        a.body,
+        a.created_at,
+        a.votes,
+        a.article_img_url,
+        COALESCE(c.comment_count::int, 0) AS comment_count
+    FROM new_article a
+    LEFT JOIN LATERAL (
+        SELECT COUNT(*) AS comment_count
+        FROM comments
+        WHERE article_id = a.article_id
+    ) c ON true;
+    `, title, topic, author, body, article_img_url || 'https://images.pexels.com/photos/97050/pexels-photo-97050.jpeg?w=700&h=700');
+
+    return db.query(queryStr)
+        .then(result => {
+            if (result.rows.length > 0) {
+                return result.rows[0];  
+            } else {
+                throw new Error('Insertion failed, no article returned.');
+            }
+        })
 }
 
 exports.topicCheck = (topic) => {
