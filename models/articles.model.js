@@ -25,7 +25,7 @@ exports.selectArticleById = (article_id) => {
         })
 };
 
-exports.fetchArticles = (topic, sort_by = 'created_at', order = 'desc') => {
+exports.fetchArticles = (topic, sort_by = 'created_at', order = 'desc', limit = 10, page = 1) => {
     const validSortColumns = ['author', 'title', 'topic', 'created_at', 'votes'];
     const validOrderColumns = ['asc', 'desc'];
 
@@ -60,7 +60,6 @@ exports.fetchArticles = (topic, sort_by = 'created_at', order = 'desc') => {
                 (SELECT COUNT(c.comment_id)::int FROM comments c WHERE c.article_id = a.article_id) AS comment_count
             FROM articles a
         `;
-
         const queryParams = [];
 
         if (topic) {
@@ -69,11 +68,27 @@ exports.fetchArticles = (topic, sort_by = 'created_at', order = 'desc') => {
         }
 
         queryString += ` ORDER BY a.${sort_by.toLowerCase()} ${order.toLowerCase()}`;
+        queryString += ` LIMIT $${queryParams.length + 1} OFFSET $${queryParams.length + 2}`;
 
-        return db.query(queryString, queryParams)
-            .then((result) => result.rows);
+        queryParams.push(limit, (page - 1) * limit);
+
+        let countQueryString = `SELECT COUNT(*) FROM articles a`;
+        if (topic) {
+            countQueryString += ` WHERE a.topic = $1`;
+        }
+
+        return db.query(countQueryString, topic ? [topic] : [])
+            .then(countResult => {
+                const total_count = parseInt(countResult.rows[0].count, 10);
+                return db.query(queryString, queryParams)
+                    .then(result => ({
+                        articles: result.rows,
+                        total_count
+                    }));
+            });
     });
 };
+
 
 exports.addVotes = (article_id, votesObj) => {
     const { inc_votes } = votesObj

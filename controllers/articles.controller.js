@@ -10,11 +10,14 @@ exports.getArticleById = (req, res, next) => {
 };
 
 exports.getAllArticles = (req, res, next) => {
-    const { topic, sort_by, order } = req.query;
+    const { topic, sort_by, order, limit, page } = req.query;
 
-    return models.fetchArticles(topic, sort_by, order)
-        .then((articles) => {
-            res.status(200).send({ articles })
+    return models.fetchArticles(topic, sort_by, order, limit, page)
+        .then(({ articles, total_count }) => {
+            res.status(200).send({
+                articles: articles,
+                total_count: total_count
+            });
         })
         .catch(next);
 }
