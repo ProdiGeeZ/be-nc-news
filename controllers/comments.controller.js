@@ -2,7 +2,8 @@ const models = require('../models/index.js');
 
 exports.getArticleComments = (req, res, next) => {
     const { article_id } = req.params;
-    models.fetchArticleComments(article_id)
+    const { limit, page } = req.query;
+    models.fetchArticleComments(article_id, limit, page)
         .then(comments => {
             res.status(200).send({ comments });
         })
