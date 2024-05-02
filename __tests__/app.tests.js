@@ -95,13 +95,13 @@ describe('GET /api/articles/:article_id', () => {
 });
 
 describe('GET /api/articles', () => {
-    test('200: Should return an array containing all article objects with correct keys', () => {
+    test('200: Should return an array containing all article objects with correct keys and total_count', () => {
         return request(app)
             .get("/api/articles")
             .expect(200)
             .then((response) => {
                 const articles = response.body.articles;
-                expect(articles).toHaveLength(13);
+                expect(articles).toHaveLength(10);
                 articles.forEach(article => {
                     expect(article).toMatchObject({
                         author: expect.any(String),
@@ -114,6 +114,35 @@ describe('GET /api/articles', () => {
                         comment_count: expect.any(Number),
                     });
                 });
+                expect(response.body).toHaveProperty('total_count');
+            });
+    });
+    test('200: Should return default number of articles when no limit is specified', () => {
+        return request(app)
+            .get("/api/articles")
+            .expect(200)
+            .then((response) => {
+                expect(response.body.articles).toHaveLength(10);  
+                expect(response.body.total_count).toBeGreaterThan(10);
+            });
+    });
+    
+    test('200: Should handle pagination correctly', () => {
+        return request(app)
+            .get("/api/articles?limit=5&page=2")
+            .expect(200)
+            .then((response) => {
+                expect(response.body.articles).toHaveLength(5);
+                expect(response.body.total_count).toBeGreaterThan(5);
+            });
+    });
+    
+    test('404: Should return an empty array if page is out of range', () => {
+        return request(app)
+            .get("/api/articles?limit=5&page=1000")  
+            .expect(200)
+            .then((response) => {
+                expect(response.body.articles).toHaveLength(0);
             });
     });
     test('200: Should return the array sorted by created_at key descending.', () => {
@@ -122,7 +151,7 @@ describe('GET /api/articles', () => {
             .expect(200)
             .then((response) => {
                 const articles = response.body.articles;
-                expect(articles).toHaveLength(13);
+                expect(articles).toHaveLength(10);
                 expect(articles).toBeSorted('created_at', { descending: true })
             });
     });
@@ -132,7 +161,7 @@ describe('GET /api/articles', () => {
             .expect(200)
             .then((response) => {
                 const articles = response.body.articles;
-                expect(articles).toHaveLength(13);
+                expect(articles).toHaveLength(10);
                 expect(articles).toBeSorted('votes', { descending: true })
             });
     });
@@ -142,7 +171,7 @@ describe('GET /api/articles', () => {
             .expect(200)
             .then((response) => {
                 const articles = response.body.articles;
-                expect(articles).toHaveLength(13);
+                expect(articles).toHaveLength(10);
                 expect(articles).toBeSorted('votes', { ascending: true });
             });
     });
@@ -152,7 +181,7 @@ describe('GET /api/articles', () => {
             .expect(200)
             .then((response) => {
                 const articles = response.body.articles;
-                expect(articles).toHaveLength(13);
+                expect(articles).toHaveLength(10);
                 expect(articles).toBeSorted('author', { descending: true });
             });
     });
@@ -162,7 +191,7 @@ describe('GET /api/articles', () => {
             .expect(200)
             .then((response) => {
                 const articles = response.body.articles;
-                expect(articles).toHaveLength(13);
+                expect(articles).toHaveLength(10);
                 expect(articles).toBeSorted('author', { descending: true });
             });
     });
@@ -172,7 +201,7 @@ describe('GET /api/articles', () => {
             .expect(200)
             .then((response) => {
                 const articles = response.body.articles;
-                expect(articles).toHaveLength(13);
+                expect(articles).toHaveLength(10);
                 expect(articles).toBeSorted('topic', { descending: true });
             });
     });
@@ -540,7 +569,7 @@ describe('GET /api/articles?topic=:topic', () => {
             .expect(200)
             .then((response) => {
                 const articles = response.body.articles;
-                expect(articles).toHaveLength(13);
+                expect(articles).toHaveLength(10);
                 articles.forEach(article => {
                     expect(article).toMatchObject({
                         author: expect.any(String),
