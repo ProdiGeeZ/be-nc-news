@@ -141,6 +141,18 @@ exports.postNewArticle = (requestBody) => {
         })
 }
 
+exports.deleteArticleById = (article_id) => {
+    const queryString = `
+    DELETE FROM articles
+    WHERE article_id = $1;
+    `;
+    return db.query(queryString, [article_id])
+        .then(result => {
+            return result.rows;
+        })
+};
+
+
 exports.topicCheck = (topic) => {
     return db.query('SELECT * FROM topics WHERE topic = $1', [topic])
         .then((result) => {

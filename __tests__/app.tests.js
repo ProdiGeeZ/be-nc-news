@@ -42,7 +42,7 @@ describe("GET /api/topics", () => {
     });
 });
 
-describe.only('POST /api/topics', () => {
+describe('POST /api/topics', () => {
     test('201: Should create a new topic and return the new row', () => {
         const newTopic = {
             slug: 'Rugby',
@@ -265,6 +265,42 @@ describe('GET /api/articles', () => {
                 const message = response.body.msg;
                 expect(message).toEqual(`Bad Request: order must be "asc" or "desc", got "${order}"`)
             });
+    });
+});
+
+describe('DELETE /api/articles/:article_id', () => {
+    test('204: Should delete the article and return an empty object.', () => {
+        return request(app)
+            .delete("/api/articles/1")
+            .expect(204)
+            .then((response) => {
+                expect(response.body).toEqual({});
+            })
+    });
+    test('404: Should return an error message if the article does not exist', () => {
+        const nonExistentArticleId = 9999; 
+        return request(app)
+            .delete(`/api/articles/${nonExistentArticleId}`)
+            .expect(404)
+            .then((response) => {
+                expect(response.body.msg).toBe("Not Found: article_id does not exist.");
+            });
+    });
+    test('400: Should return an error for invalid article ID format', () => {
+        const invalidArticleId = "invalid";
+        return request(app)
+            .delete(`/api/articles/${invalidArticleId}`)
+            .expect(400)
+            .then(response => {
+                expect(response.body.msg).toBe("Bad Request: Invalid request format.");
+            });
+    });
+    test('204: Concurrent delete requests should handle gracefully', () => {
+        const articleId = 3;
+        return Promise.all([
+            request(app).delete(`/api/articles/${articleId}`).expect(204),
+            request(app).delete(`/api/articles/${articleId}`).expect(404) 
+        ]);
     });
 });
 
