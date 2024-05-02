@@ -1,6 +1,5 @@
 const format = require("pg-format");
 const db = require("../db/connection.js");
-const { topicCheck } = require("./articles.model.js");
 
 exports.fetchTopics = () => {
     let queryString = `SELECT * FROM topics`
@@ -11,9 +10,6 @@ exports.fetchTopics = () => {
 
 exports.addNewTopic = (requestBody) => {
     const { slug, description } = requestBody;
-
-    
-
     const queryString = format(`
     INSERT INTO topics (slug, description)
     VALUES (%L, %L)
