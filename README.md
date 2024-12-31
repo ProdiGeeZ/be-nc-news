@@ -18,8 +18,8 @@ Before you begin, ensure you have the following installed:
 Start by cloning the repository to your local machine:
 
 ```bash
-git clone [repository URL]
-cd [repository directory]
+git clone https://github.com/ProdiGeeZ/be-nc-news.git
+cd be-nc-news
 ```
 
 ### Install Dependencies
